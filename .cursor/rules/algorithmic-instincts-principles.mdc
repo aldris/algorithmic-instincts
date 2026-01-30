@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Chat preferences
 
-1. Always answer in English, regardless of the language I use to ask.
+1. For this project, answer in Chinese. For noun/terminology, add the English term in parentheses (e.g. 递归 (recursion), DFS, BFS).
 2. Be concise; avoid unnecessary elaboration.
 3. Do not modify any file without my explicit approval first.
 
@@ -17,3 +17,4 @@ alwaysApply: true
 - Every section must answer: "When should I think of this approach?"
 - If content is hard to handwrite, it is too verbose.
 - Remove anything that does not improve interview performance.
+- **Write chapter content in Chinese.** User thinks in Chinese; Chinese docs improve recall. For noun/terminology, add the English term (e.g. 递归 (recursion)). Code and variable names stay in English.

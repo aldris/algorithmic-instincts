@@ -1,28 +1,71 @@
-# Ch7 — Greedy
+# Ch7 — 贪心 (Greedy)
 
-Proof ability. No fixed template; can you justify your choice?
+贪心没有统一模板，考的是**「局部最优能推出全局最优」的论证能力**。面试官常问：为什么这样选是对的？你能举反例吗？
 
-## When to think greedy
+---
 
-- Optimal substructure; local choice stays global
-- Intervals: common type — schedule, merge, non-overlapping
-- (Signals to fill)
+## 什么时候想到贪心
 
-## Sort strategy
+- **最优子结构** — 大问题的最优解包含小问题的最优解（和 DP 一样），但**贪心多一步**：当前步骤的「局部最优」选择，可以推出全局最优（即不需要像 DP 那样枚举所有子问题）。
+- **常见题型** — **区间 (intervals)**：选最多不重叠区间、合并区间、用最少的点覆盖区间等。**调度**：按截止时间或时长排序后贪心。**字典序**：从左往右能小则小。**跳跃**：能否到达、最少跳数等。
 
-- By start, end, or length; tie-break
-- (To fill)
+**信号：** 问「最多/最少选几个」「能否」「最小代价」且**直觉上「每一步选当前最好的」**可能对时，先想贪心；若举不出反例再写。
 
-## Greedy safety
+---
 
-- Why can’t we do better by changing one choice?
-- (To fill)
+## 排序策略 (sort strategy)
 
-## Counterexample thinking
+很多贪心题先**排序**，再一遍扫描做选择。
 
-- Try to break the greedy; if you can’t, argue safe
-- (To fill)
+- **按起点排序** — 区间选最多不重叠：按 end 排序，从左到右能选就选（选当前 end 最小的，给后面留空间）。
+- **按终点排序** — 区间合并：按 start 排序，能并则并。
+- **按某种权重排序** — 调度题按 deadline 或 (duration, deadline) 等；背包的「性价比」等。
+- **字典序** — 从左往右，在满足约束下尽量选小的字符或数字。
 
-## Failure modes
+```python
+# 例：最多不重叠区间（按 end 排序，能选就选）
+def max_non_overlapping(intervals):
+    if not intervals: return 0
+    intervals.sort(key=lambda x: x[1])
+    count = 1
+    end = intervals[0][1]
+    for i in range(1, len(intervals)):
+        if intervals[i][0] >= end:
+            count += 1
+            end = intervals[i][1]
+    return count
+```
 
-- (To fill)
+---
+
+## 贪心安全性 (greedy safety)
+
+要能说清楚：**为什么不能通过改变某一步的选择而更好？**
+
+- **交换论证** — 假设存在一个最优解和贪心解在某步不同；把最优解里那一步「换成」贪心选的那个，证明不会变差（或会变好），从而矛盾。
+- **归纳** — 第一步选贪心选择后，剩下的是规模更小的同构问题；归纳假设贪心对子问题最优，加上第一步不劣，得整体最优。
+
+---
+
+## 反例思维 (counterexample thinking)
+
+若不确定贪心对不对，**试着造反例**：有没有一种输入，让「当前贪心策略」得到的结果不是最优？
+
+- 例如：区间问题若按 start 排序贪心选「能选就选」，可能错；按 end 排序才对。
+- 例如：背包若按「价值/重量」贪心，一般错（需 DP）；但某些特殊约束下可能对。
+
+---
+
+## 例题 (LeetCode)
+
+- **LC 56 合并区间 (Merge Intervals)** — 场景：重叠的区间合并成不重叠的。为何用：区间按起点排序后，能并则并。如何用：按 start 排序，维护当前区间 [cur_start, cur_end]，若下一段 start<=cur_end 则合并（更新 cur_end），否则输出当前区间并开新段。
+- **LC 435 无重叠区间 (Non-overlapping Intervals)** — 场景：删最少的区间使剩余区间两两不重叠。为何用：等价于「选最多不重叠区间」= 按 end 排序贪心选。如何用：按 end 排序，从左到右能选就选（当前 start>= 上一 end 则选），计数即最多保留数，n-计数即最少删除数。
+- **LC 55 跳跃游戏 (Jump Game)** — 场景：数组表示每步最远跳几格，问能否到最后一格。为何用：贪心维护「当前能到的最远位置」。如何用：遍历 i，若 i>max_reach 则 return False；否则 max_reach=max(max_reach, i+nums[i])；最后看 max_reach>=n-1。
+
+---
+
+## 失败模式 (failure modes)
+
+- **贪心错了却当对的用** — 局部最优不一定全局最优；证不了就考虑 DP 或暴力。
+- **排序关键字错** — 区间题按 start 还是 end、按哪个维度排序，要推清楚。
+- **边界** — 空列表、单个区间、全部重叠等要单独处理。

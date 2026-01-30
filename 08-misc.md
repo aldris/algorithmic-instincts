@@ -1,18 +1,59 @@
-# Ch8 — Misc
+# Ch8 — 杂项 (Misc)
 
-Bit manipulation, simple math. Catch-all for patterns that don’t fit the main chapters.
+位运算 (bit manipulation)、简单数学。前面几章没覆盖的小套路放这里。
 
-## When to think bit / math
+---
 
-- XOR, power of 2, count bits; "single number", "missing number"
-- (Signals to fill)
+## 什么时候想到位运算 / 数学
 
-## Common tricks
+- **XOR** — 「只有一个出现一次、其他都两次」「找缺失的数」「找两个只出现一次的数」。利用 a ^ a = 0，a ^ 0 = a。
+- **2 的幂、位计数** — 「是否是 2 的幂」「二进制里 1 的个数」「最低位 1」等。n & (n-1) 去掉最低位 1；n & -n 得到最低位 1。
+- **数学** — 公约数 gcd、取模性质、快速幂等。
 
-- XOR: a ^ a = 0; a ^ 0 = a
-- n & (n - 1) drops lowest set bit
-- (To fill)
+**信号：** 题目里出现「异或」「二进制」「出现一次」等；或数据范围很小（如 32 位整数）可逐位考虑。
 
-## Failure modes
+---
 
-- (To fill)
+## 常用技巧 (common tricks)
+
+- **XOR** — a ^ a = 0；a ^ 0 = a。一堆数全 XOR，出现两次的消掉，剩下出现一次的。
+- **n & (n - 1)** — 去掉 n 的二进制里最低位的 1。用来数 1 的个数、判断是否 2 的幂（n > 0 且 n & (n-1) == 0）。
+- **n & -n** — 得到 n 的最低位的 1（如 6 的二进制 110 得到 2）。
+- **移位** — 乘除 2 用左移右移；取某一位用 (n >> k) & 1。
+
+```python
+# 判断是否 2 的幂
+def is_power_of_two(n):
+    return n > 0 and (n & (n - 1)) == 0
+
+# 二进制中 1 的个数
+def popcount(n):
+    c = 0
+    while n:
+        n &= n - 1
+        c += 1
+    return c
+
+# 只有一个数出现一次，其他都两次 → 全 XOR
+def single_number(nums):
+    ans = 0
+    for x in nums:
+        ans ^= x
+    return ans
+```
+
+---
+
+## 例题 (LeetCode)
+
+- **LC 136 只出现一次的数字 (Single Number)** — 场景：除一个数出现一次外其余都两次，找那个数。为何用：两次的异或为 0，一次的和 0 异或为自己。如何用：ans=0，遍历 nums 做 ans^=x，最后 ans 即答案。
+- **LC 191 位1的个数 (Number of 1 Bits)** — 场景：无符号整数二进制中 1 的个数。为何用：n&(n-1) 去掉最低位 1，循环直到 0。如何用：c=0，while n: n&=n-1; c+=1。
+- **LC 231 2 的幂 (Power of Two)** — 场景：判断 n 是否为 2 的幂。为何用：2 的幂二进制只有一个 1，即 n>0 且 n&(n-1)==0。如何用：return n>0 and (n&(n-1))==0。
+
+---
+
+## 失败模式 (failure modes)
+
+- **有符号/无符号** — 右移时有的语言是算术右移（补符号位），有的逻辑右移；Python 整数无限长，要看清题意范围。
+- **优先级** — 位运算优先级低于加减乘除，该加括号就加。
+- **0 和负数** — 0 的「最低位 1」、负数的二进制表示要按题目/语言约定处理。
