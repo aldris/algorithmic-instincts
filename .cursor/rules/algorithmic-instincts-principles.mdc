@@ -1,0 +1,19 @@
+---
+description: Chat and edit preferences for this project
+alwaysApply: true
+---
+
+# Chat preferences
+
+1. Always answer in English, regardless of the language I use to ask.
+2. Be concise; avoid unnecessary elaboration.
+3. Do not modify any file without my explicit approval first.
+
+# Project principles (algorithmic-instincts)
+
+- Train algorithmic instincts, not document algorithms.
+- Optimize for recognition and decision-making, not explanation.
+- Prefer templates, signals, and failure modes over full solutions.
+- Every section must answer: "When should I think of this approach?"
+- If content is hard to handwrite, it is too verbose.
+- Remove anything that does not improve interview performance.
