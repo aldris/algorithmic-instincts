@@ -4,10 +4,36 @@
 
 ---
 
+## 识别信号 (Recognition Signals)
+
+| 题目信号 | 想到的方法 |
+|----------|------------|
+| 「节点」「边」「邻接」 | 建图（邻接表/矩阵），DFS/BFS |
+| 「连通分量」「岛屿」「能到吗」 | 对每个未访问节点 DFS/BFS，计数或收集 |
+| 「最短路径」（边数） | BFS，入队时标记，第一次到达即最短 |
+| 「顺序」「依赖」「先修」 | 拓扑排序（入度 0 入队，出队即顺序） |
+| 「最短路径」（带权、非负） | Dijkstra（堆 + 松弛） |
+| 「负权边」 | Bellman-Ford（松弛 V-1 轮） |
+| 「最小代价连通所有节点」 | MST：Kruskal（边排序+Union-Find）或 Prim（堆） |
+| 「能否二着色」「分组使组内无边」 | 二分图：BFS/DFS 染色 |
+| 「动态连通」「合并集合」 | Union-Find |
+
+---
+
 ## 什么时候想到图
 
 - 题目里有**节点 (node)** 和**边 (edge)**、**依赖关系**、**连通分量**、**最短路径**（边数或带权）。
 - 建图方式：**邻接表 (adjacency list)** — 每个节点一个列表存邻居；或 **邻接矩阵**。有向/无向、是否带权根据题意。
+
+---
+
+## 手写模板 (Whiteboard Templates)
+
+**DFS（入栈时标记）：** `visited.add(start); stack=[start]` → `while stack: u=pop; for v in adj[u]: if v not in visited: visited.add(v); stack.append(v)`  
+**BFS 最短路：** `q=deque([(start,0)]); visited={start}` → 出队 (u,d)，若 u==target  return d；邻居未访问则 visited.add、入队 (v,d+1)。  
+**拓扑排序：** 算入度 → 入度 0 入队 → 出队 u，order.append(u)，邻居入度-1，若 0 则入队；若 len(order)<n 则有环。  
+**Dijkstra：** dist[s]=0，堆 (0,s) → 取 (d,u)，若 d!=dist[u] continue；松弛邻居，若更小则更新 dist 并入堆。  
+**二分图：** 对每个未访问 BFS，color[u]=0/1，邻居染 1-color[u]，若已染且同色 return False。
 
 ---
 
@@ -166,6 +192,18 @@ def is_bipartite(adj, n):
 
 ---
 
+## 复杂度直觉 (Complexity Instincts)
+
+| 操作 | 时间 | 空间 | 一眼看出 |
+|------|------|------|----------|
+| DFS/BFS 遍历 | O(V+E) | O(V) visited + 栈/队列 | 点边各访问一次 |
+| 拓扑排序 | O(V+E) | O(V) 入度+队列 | 建度 O(E)，出队 V 次 |
+| Dijkstra | O((V+E) log V) 二叉堆 | O(V) dist+堆 | 每边松弛一次，堆操作 log V |
+| Bellman-Ford | O(VE) | O(V) | V-1 轮每轮扫 E 条边 |
+| 二分图染色 | O(V+E) | O(V) color | 每点每边一次 |
+
+---
+
 ## 例题 (LeetCode)
 
 - **LC 200 岛屿数量 (Number of Islands)** — 场景：二维网格，相邻 1 为岛，求岛数。为何用：连通分量 = 对每个未访问的 1 做 DFS/BFS 并标记。如何用：二重循环遇 1 则 DFS 整岛标 0，计数 +1。
@@ -175,8 +213,25 @@ def is_bipartite(adj, n):
 
 ---
 
-## 失败模式 (failure modes)
+## 失败模式 (Failure Modes)
+
+**原内容：**
 
 - **visited 时机错** — 入队/入栈时就要标记，别等弹出再标，否则重复进队。
 - **有向/无向搞混** — 建图时无向要加两条边。
 - **Dijkstra 用于负权** — 负权要用 Bellman-Ford；Dijkstra 在负权下可能错。
+
+**补充：**
+
+- **常见误解** — 「BFS 和 DFS 结果一样」：遍历到的点一样，顺序和「第一次到达」含义不同；「拓扑排序唯一」：不唯一，任意合法顺序均可。
+- **面试易挂点** — visited 在「弹出时」才标导致同一节点多次入队；有向图建反（先修 A→B 是 B 依赖 A，边应是 A→B 还是 B→A 要看清）；Dijkstra 堆里重复入队没判断 d!=dist[u]。
+- **典型反例** — 无权最短路用 DFS：第一次到达不保证最短；应用 BFS。
+
+---
+
+## 跨章节联系 (Cross-Chapter Links)
+
+- **Ch0 DFS/BFS** — 图 = 树上的 DFS/BFS + **visited** + 环；递归契约、状态归属同 Ch0。
+- **Ch1 Tree** — 树 = 无环无多父的图；树不需要 visited。
+- **Ch4 数据结构** — Dijkstra 用堆；拓扑用队列；Kruskal 用 Union-Find。
+- **Ch6 DP** — 最短路有重叠子问题时可 DP（如 DAG 上单源最短路）；一般图用 BFS/Dijkstra。

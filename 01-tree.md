@@ -4,6 +4,19 @@
 
 ---
 
+## 识别信号 (Recognition Signals)
+
+| 题目信号 | 想到的方法 |
+|----------|------------|
+| 给一棵二叉树/多叉树 | 树 DFS/BFS |
+| 「路径」「根到叶」「路径和」 | 往下传 path，到叶时记入 result，回溯 pop |
+| 「层序」「每一层的节点/最大值」 | BFS + 按层循环（for _ in range(len(q))） |
+| 「树高」「是否平衡」「LCA」 | 子树 return 值，当前节点 merge（max/and） |
+| 「是否 BST」「是否对称」 | 往下传约束（范围/镜像），递归校验 |
+| 「序列化/反序列化」 | 先序/层序遍历，空用 # 或 null 表示 |
+
+---
+
 ## 什么时候想到树 DFS/BFS
 
 题目给了一棵**二叉树 (binary tree)** 或**多叉树**，且问的是下面一类问题时，就用树的遍历：
@@ -14,6 +27,31 @@
 - **序列化 / 反序列化 (serialize / deserialize)** — 树 ↔ 字符串
 
 树没有「回头路」，所以不需要 `visited`，比图简单。
+
+---
+
+## 手写模板 (Whiteboard Templates)
+
+**树递归（返回值合并）：**
+```
+输入：node
+base：not node → return 基准值（0/[]/True）
+recurse：left=f(node.left), right=f(node.right)
+合并：merge(left, right, node.val)  # max/sum/and
+return
+```
+
+**树路径（需还原）：**
+```
+输入：node, path, (target/remain)
+base：not node → return
+pre：path.append(node.val)
+到叶时：若满足则 result.append(path[:])
+recurse：dfs(left), dfs(right)
+post：path.pop()
+```
+
+**层序 BFS：** `q=deque([root])` → `while q: level_size=len(q); for _ in range(level_size): 出队、记值、子入队`
 
 ---
 
@@ -92,6 +130,16 @@ def level_order(root):
 
 ---
 
+## 复杂度直觉 (Complexity Instincts)
+
+| 操作 | 时间 | 空间 | 一眼看出 |
+|------|------|------|----------|
+| 树 DFS（每节点一次） | O(n) | O(h) 栈，最坏 O(n) | 节点数 n，树高 h |
+| 树 BFS 层序 | O(n) | O(w) 队列，w 为最宽层 | 节点数 n |
+| 路径收集（每叶一条 path 拷贝） | O(n) | O(h) 栈 + 结果 | 叶数 × 路径长 |
+
+---
+
 ## 例题 (LeetCode)
 
 - **LC 104 二叉树最大深度 (Maximum Depth of Binary Tree)** — 场景：求树高。为何用：子树返回高度，当前节点合并为 1+max(left, right)。如何用：base 为空返回 0；递归左右取 max 加 1。
@@ -100,8 +148,25 @@ def level_order(root):
 
 ---
 
-## 失败模式 (failure modes)
+## 失败模式 (Failure Modes)
+
+**原内容：**
 
 - **忘记 pop** — 路径用共享的 `path` 时，递归返回后必须 `path.pop()`，否则兄弟分支会带上不该有的节点。
 - **空节点没处理** — `if not node: return 基准值` 要写对；基准值要和合并逻辑一致（如深度为 0，和为 0）。
 - **要层序却用 DFS** — 问「每一层」时用 BFS 按层取；DFS 一次走到底，不自然分层。
+
+**补充：**
+
+- **常见误解** — 「树一定要用递归」：层序用迭代 BFS 更自然；「path 可以不用 pop」：共享 path 时必须 pop，否则兄弟分支污染。
+- **面试易挂点** — 路径题忘 pop；层序题用 DFS 导致层混在一起；LCA/平衡等合并逻辑写错（左右都要用到）。
+- **典型反例** — 层序遍历用 DFS：同一层的节点不在同一轮处理，无法按层输出。
+
+---
+
+## 跨章节联系 (Cross-Chapter Links)
+
+- **Ch0 DFS/递归** — 树递归 = Ch0 的「同样结构更小规模」+ 无 visited。
+- **Ch2 Backtracking** — 路径收集 = DFS + path + **pop 还原**；树是隐式决策树。
+- **Ch4 Graph** — 图 = 树 + 多父/多子 + 环 + **visited**；树上的 DFS/BFS 搬过去多一步标记。
+- **Ch6 DP** — 树形 DP = 树上递归 + 每个节点根据子树返回值合并（无 memo 若无重叠）。

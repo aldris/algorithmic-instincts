@@ -5,9 +5,9 @@ alwaysApply: true
 
 # Chat preferences
 
-1. For this project, answer in Chinese. For noun/terminology, add the English term in parentheses (e.g. 递归 (recursion), DFS, BFS).
-2. Be concise; avoid unnecessary elaboration.
-3. Do not modify any file without my explicit approval first.
+1. **Do not modify any file without my explicit approval first.** Before making any edit, propose the change and wait for me to agree (e.g. "go", "同意", "可以").
+2. For this project, answer in Chinese. For noun/terminology, add the English term in parentheses (e.g. 递归 (recursion), DFS, BFS).
+3. Be concise; avoid unnecessary elaboration.
 
 # Project principles (algorithmic-instincts)
 

@@ -2,6 +2,8 @@
 
 Train algorithmic instincts for Meta/Google interviews—recognition and decision-making, not documentation. Handwritable notes: signals, templates, failure modes.
 
+Each chapter includes: **Recognition Signals** (table), **Whiteboard Templates**, **Complexity Instincts**, **Failure Modes**, **Cross-Chapter Links**. Content in Chinese with English terms in parentheses; code and variable names in English.
+
 ## Chapters
 
 - [Ch0 — DFS / Recursion](00-dfs-recursion.md) — Foundation: how to think, then what to think
